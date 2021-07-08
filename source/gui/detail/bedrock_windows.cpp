@@ -378,6 +378,9 @@ namespace detail
 		auto & intr_locker = wd_manager().internal_lock();
 		intr_locker.revert();
 
+		struct none_exception : std::exception {};
+		struct none_exception_2 : std::exception {};
+
 		try
 		{
 			MSG msg;
@@ -436,7 +439,7 @@ namespace detail
 				while(::PeekMessage(&msg, 0, 0, 0, PM_REMOVE));
 			}
 		}
-        catch(std::exception& e)
+        catch(none_exception& e)
         {
 			(msgbox(condition_wd, "An uncaptured std::exception during message pumping: ").icon(msgbox::icon_information)
 								<< "\n   in form: " << API::window_caption(condition_wd)
@@ -454,7 +457,7 @@ namespace detail
 			}
 			throw;
         }
-		catch(...)
+		catch(none_exception_2)
 		{
 			(msgbox(condition_wd, "An exception during message pumping!").icon(msgbox::icon_information)
 				<<"An uncaptured non-std exception during message pumping!"
